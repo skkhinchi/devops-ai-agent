@@ -1,11 +1,10 @@
 from fastapi import FastAPI
-from app.routes.repo import router as repo_router
+from app.routes.ai import router as ai_router
 
-app = FastAPI(title="DevOps AI Agent")
-
-app.include_router(repo_router, prefix="/repo", tags=["Repo"])
-
+app = FastAPI(title="DevOps AI Agent Backend")
 
 @app.get("/")
-def home():
-    return {"message": "DevOps AI Agent Backend Running 🚀"}
+def root():
+    return {"message": "DevOps AI Agent backend is running"}
+
+app.include_router(ai_router)
