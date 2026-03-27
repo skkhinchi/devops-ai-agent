@@ -1,5 +1,7 @@
+
 import os
 from dotenv import load_dotenv
+import langsmith as ls
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
@@ -43,6 +45,7 @@ class RAGService:
 
         return splitter.split_documents(documents)
 
+    @ls.traceable(name="Ingest Repository", run_type="chain")
     def ingest_repo(self, repo_files: list[dict]):
         chunks = self.split_documents(repo_files)
 
@@ -67,6 +70,7 @@ class RAGService:
                 embedding_function=self.embeddings
             )
 
+    @ls.traceable(name="Ask Repo", run_type="chain")
     def ask_repo(self, question: str):
         if not self.vectorstore:
             self.load_existing_db()
@@ -115,6 +119,7 @@ User Question:
             "sources": list({doc.metadata.get("path", "unknown") for doc in docs})
         }
 
+    @ls.traceable(name="Generate Repo Summary", run_type="chain")
     def generate_repo_summary(self):
         if not self.vectorstore:
             self.load_existing_db()
